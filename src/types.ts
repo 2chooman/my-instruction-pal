@@ -9,7 +9,7 @@ export interface User {
   };
 }
 
-export type DealStatus = 'processing' | 'ready' | 'cancelled';
+export type DealStatus = 'processing' | 'ready' | 'cancelled' | 'pending_payment';
 
 export interface Deal {
   id: string;
