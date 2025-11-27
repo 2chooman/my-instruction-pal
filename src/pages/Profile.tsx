@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User as UserIcon, Mail, Phone, Bell, CheckCircle2, Image, Calendar, ExternalLink } from 'lucide-react';
+import { User as UserIcon, Mail, Phone, Bell, CheckCircle2, Image, Calendar, ExternalLink, ChevronDown } from 'lucide-react';
 import { Header } from '@/components/Header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,7 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { apiClient } from '@/lib/apiClient';
-import { User, Deal } from '@/types';
+import { User, Deal, Photo } from '@/types';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const statusMap = {
@@ -20,6 +20,8 @@ const statusMap = {
 export default function Profile() {
   const [user, setUser] = useState<User | null>(null);
   const [deals, setDeals] = useState<Deal[]>([]);
+  const [photos, setPhotos] = useState<Record<string, Photo[]>>({});
+  const [expandedDeal, setExpandedDeal] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [smsEnabled, setSmsEnabled] = useState(true);
   const [whatsappEnabled, setWhatsappEnabled] = useState(true);
@@ -44,6 +46,22 @@ export default function Profile() {
     };
     loadData();
   }, []);
+
+  const toggleDeal = async (dealId: string) => {
+    if (expandedDeal === dealId) {
+      setExpandedDeal(null);
+    } else {
+      setExpandedDeal(dealId);
+      if (!photos[dealId]) {
+        try {
+          const dealPhotos = await apiClient.getDealPhotos(dealId);
+          setPhotos(prev => ({ ...prev, [dealId]: dealPhotos }));
+        } catch (error) {
+          console.error('Ошибка загрузки фотографий:', error);
+        }
+      }
+    }
+  };
 
   if (isLoading) {
     return (
@@ -186,29 +204,35 @@ export default function Profile() {
             ) : (
               <div className="space-y-3">
                 {deals.map((deal) => (
-                  <Card
-                    key={deal.id}
-                    className="cursor-pointer"
-                    onClick={() => navigate(`/deals/${deal.id}`)}
-                  >
+                  <Card key={deal.id}>
                     <CardContent className="p-3">
-                      <div className="flex flex-col gap-2">
+                      <div 
+                        className="flex flex-col gap-2 cursor-pointer"
+                        onClick={() => toggleDeal(deal.id)}
+                      >
                         <div className="flex items-start justify-between gap-2">
                           <h3 className="text-sm font-medium text-foreground">
                             {deal.title}
                           </h3>
-                          <Badge
-                            variant={statusMap[deal.status].variant}
-                            className={
-                              deal.status === 'ready'
-                                ? 'bg-success text-success-foreground'
-                                : deal.status === 'processing'
-                                ? 'bg-muted text-foreground'
-                                : ''
-                            }
-                          >
-                            {statusMap[deal.status].label}
-                          </Badge>
+                          <div className="flex items-center gap-2">
+                            <Badge
+                              variant={statusMap[deal.status].variant}
+                              className={
+                                deal.status === 'ready'
+                                  ? 'bg-success text-success-foreground'
+                                  : deal.status === 'processing'
+                                  ? 'bg-muted text-foreground'
+                                  : ''
+                              }
+                            >
+                              {statusMap[deal.status].label}
+                            </Badge>
+                            <ChevronDown 
+                              className={`h-4 w-4 transition-transform ${
+                                expandedDeal === deal.id ? 'rotate-180' : ''
+                              }`}
+                            />
+                          </div>
                         </div>
                         <div className="flex items-center gap-3 text-xs text-muted-foreground">
                           <div className="flex items-center gap-1">
@@ -230,6 +254,27 @@ export default function Profile() {
                           </Badge>
                         </div>
                       </div>
+                      
+                      {expandedDeal === deal.id && (
+                        <div className="mt-3 pt-3 border-t border-border">
+                          {photos[deal.id] ? (
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                              {photos[deal.id].map((photo) => (
+                                <img
+                                  key={photo.id}
+                                  src={photo.thumbnailUrl}
+                                  alt="Фото"
+                                  className="w-full h-24 object-cover rounded"
+                                />
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="flex justify-center py-4">
+                              <div className="text-xs text-muted-foreground">Загрузка...</div>
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
                 ))}

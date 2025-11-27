@@ -30,7 +30,7 @@ const mockDeals: Deal[] = [
     date: '2024-11-15',
     status: 'ready',
     source: 'bitrix',
-    photosCount: 45,
+    photosCount: 5,
   },
   {
     id: '2',
@@ -38,7 +38,7 @@ const mockDeals: Deal[] = [
     date: '2024-11-20',
     status: 'processing',
     source: 'bitrix',
-    photosCount: 120,
+    photosCount: 5,
   },
   {
     id: '3',
@@ -46,22 +46,22 @@ const mockDeals: Deal[] = [
     date: '2024-11-10',
     status: 'ready',
     source: 'bitrix',
-    photosCount: 30,
+    photosCount: 5,
   },
 ];
 
 const mockPhotos: Record<string, Photo[]> = {
-  '1': Array.from({ length: 45 }, (_, i) => ({
+  '1': Array.from({ length: 5 }, (_, i) => ({
     id: `photo-1-${i + 1}`,
     url: `https://images.unsplash.com/photo-${1511285560000 + i}?w=1200&h=800&fit=crop`,
     thumbnailUrl: `https://images.unsplash.com/photo-${1511285560000 + i}?w=400&h=300&fit=crop`,
   })),
-  '2': Array.from({ length: 120 }, (_, i) => ({
+  '2': Array.from({ length: 5 }, (_, i) => ({
     id: `photo-2-${i + 1}`,
     url: `https://images.unsplash.com/photo-${1519741644000 + i}?w=1200&h=800&fit=crop`,
     thumbnailUrl: `https://images.unsplash.com/photo-${1519741644000 + i}?w=400&h=300&fit=crop`,
   })),
-  '3': Array.from({ length: 30 }, (_, i) => ({
+  '3': Array.from({ length: 5 }, (_, i) => ({
     id: `photo-3-${i + 1}`,
     url: `https://images.unsplash.com/photo-${1503454537000 + i}?w=1200&h=800&fit=crop`,
     thumbnailUrl: `https://images.unsplash.com/photo-${1503454537000 + i}?w=400&h=300&fit=crop`,
