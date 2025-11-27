@@ -1,20 +1,23 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User as UserIcon, Mail, Phone, Bell, CheckCircle2, Image, Calendar, ExternalLink, ChevronDown } from 'lucide-react';
+import { User as UserIcon, Mail, Phone, Bell, CheckCircle2, Image, Calendar, ChevronDown, Edit2, MessageSquare, Send } from 'lucide-react';
 import { Header } from '@/components/Header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import { apiClient } from '@/lib/apiClient';
 import { User, Deal, Photo } from '@/types';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useToast } from '@/hooks/use-toast';
 
 const statusMap = {
   processing: { label: 'В обработке', variant: 'default' as const },
   ready: { label: 'Готово', variant: 'default' as const },
   cancelled: { label: 'Отменена', variant: 'destructive' as const },
+  pending_payment: { label: 'Ждет оплаты', variant: 'secondary' as const },
 };
 
 export default function Profile() {
@@ -25,7 +28,10 @@ export default function Profile() {
   const [isLoading, setIsLoading] = useState(true);
   const [smsEnabled, setSmsEnabled] = useState(true);
   const [whatsappEnabled, setWhatsappEnabled] = useState(true);
+  const [editingField, setEditingField] = useState<'name' | 'phone' | 'email' | null>(null);
+  const [editValue, setEditValue] = useState('');
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   useEffect(() => {
     const loadData = async () => {
@@ -61,6 +67,34 @@ export default function Profile() {
         }
       }
     }
+  };
+
+  const startEditing = (field: 'name' | 'phone' | 'email', currentValue: string) => {
+    setEditingField(field);
+    setEditValue(currentValue);
+  };
+
+  const saveEdit = () => {
+    if (user && editingField) {
+      setUser({ ...user, [editingField]: editValue });
+      setEditingField(null);
+      toast({
+        title: 'Данные обновлены',
+        description: 'Изменения сохранены успешно',
+      });
+    }
+  };
+
+  const cancelEdit = () => {
+    setEditingField(null);
+    setEditValue('');
+  };
+
+  const sendNotification = (channel: 'sms' | 'whatsapp', dealTitle: string) => {
+    toast({
+      title: `Уведомление отправлено`,
+      description: `Статус "${dealTitle}" отправлен через ${channel === 'sms' ? 'СМС' : 'WhatsApp'}`,
+    });
   };
 
   if (isLoading) {
@@ -114,25 +148,91 @@ export default function Profile() {
             <div className="grid gap-3">
               <div className="flex items-center gap-2">
                 <UserIcon className="h-4 w-4 text-muted-foreground" />
-                <div>
+                <div className="flex-1">
                   <p className="text-xs text-muted-foreground">ФИО</p>
-                  <p className="text-sm font-medium text-foreground">{user.name}</p>
+                  {editingField === 'name' ? (
+                    <div className="flex gap-2 mt-1">
+                      <Input
+                        value={editValue}
+                        onChange={(e) => setEditValue(e.target.value)}
+                        className="h-7 text-sm"
+                      />
+                      <Button size="sm" onClick={saveEdit} className="h-7">Сохранить</Button>
+                      <Button size="sm" variant="ghost" onClick={cancelEdit} className="h-7">Отмена</Button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-medium text-foreground">{user.name}</p>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="h-6 w-6"
+                        onClick={() => startEditing('name', user.name)}
+                      >
+                        <Edit2 className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </div>
 
               <div className="flex items-center gap-2">
                 <Phone className="h-4 w-4 text-muted-foreground" />
-                <div>
+                <div className="flex-1">
                   <p className="text-xs text-muted-foreground">Телефон</p>
-                  <p className="text-sm font-medium text-foreground">{user.phone}</p>
+                  {editingField === 'phone' ? (
+                    <div className="flex gap-2 mt-1">
+                      <Input
+                        value={editValue}
+                        onChange={(e) => setEditValue(e.target.value)}
+                        className="h-7 text-sm"
+                      />
+                      <Button size="sm" onClick={saveEdit} className="h-7">Сохранить</Button>
+                      <Button size="sm" variant="ghost" onClick={cancelEdit} className="h-7">Отмена</Button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-medium text-foreground">{user.phone}</p>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="h-6 w-6"
+                        onClick={() => startEditing('phone', user.phone)}
+                      >
+                        <Edit2 className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </div>
 
               <div className="flex items-center gap-2">
                 <Mail className="h-4 w-4 text-muted-foreground" />
-                <div>
+                <div className="flex-1">
                   <p className="text-xs text-muted-foreground">E-mail</p>
-                  <p className="text-sm font-medium text-foreground">{user.email}</p>
+                  {editingField === 'email' ? (
+                    <div className="flex gap-2 mt-1">
+                      <Input
+                        value={editValue}
+                        onChange={(e) => setEditValue(e.target.value)}
+                        className="h-7 text-sm"
+                      />
+                      <Button size="sm" onClick={saveEdit} className="h-7">Сохранить</Button>
+                      <Button size="sm" variant="ghost" onClick={cancelEdit} className="h-7">Отмена</Button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-medium text-foreground">{user.email}</p>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="h-6 w-6"
+                        onClick={() => startEditing('email', user.email)}
+                      >
+                        <Edit2 className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -234,24 +334,48 @@ export default function Profile() {
                             />
                           </div>
                         </div>
-                        <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                          <div className="flex items-center gap-1">
-                            <Calendar className="h-3 w-3" />
-                            <span>
-                              {new Date(deal.date).toLocaleDateString('ru-RU', {
-                                day: 'numeric',
-                                month: 'long',
-                              })}
-                            </span>
+                        <div className="flex flex-col gap-2">
+                          <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                            <div className="flex items-center gap-1">
+                              <Calendar className="h-3 w-3" />
+                              <span>
+                                {new Date(deal.date).toLocaleDateString('ru-RU', {
+                                  day: 'numeric',
+                                  month: 'long',
+                                })}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Image className="h-3 w-3" />
+                              <span>{deal.photosCount}</span>
+                            </div>
                           </div>
-                          <div className="flex items-center gap-1">
-                            <Image className="h-3 w-3" />
-                            <span>{deal.photosCount}</span>
+                          <div className="flex gap-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="h-7 text-xs"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                sendNotification('sms', deal.title);
+                              }}
+                            >
+                              <MessageSquare className="h-3 w-3 mr-1" />
+                              СМС
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="h-7 text-xs"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                sendNotification('whatsapp', deal.title);
+                              }}
+                            >
+                              <Send className="h-3 w-3 mr-1" />
+                              WhatsApp
+                            </Button>
                           </div>
-                          <Badge variant="outline" className="text-xs">
-                            <ExternalLink className="h-3 w-3 mr-1" />
-                            {deal.source}
-                          </Badge>
                         </div>
                       </div>
                       

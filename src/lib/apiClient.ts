@@ -44,7 +44,7 @@ const mockDeals: Deal[] = [
     id: '3',
     title: 'Детская фотосессия',
     date: '2024-11-10',
-    status: 'ready',
+    status: 'pending_payment',
     source: 'bitrix',
     photosCount: 5,
   },
