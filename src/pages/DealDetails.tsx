@@ -84,7 +84,7 @@ export default function DealDetails() {
   return (
     <>
       <Header userName={user?.name} />
-      <div className="container mx-auto p-4 md:p-8 max-w-7xl space-y-6">
+      <div className="container mx-auto p-4 max-w-7xl space-y-4">
         <Button variant="ghost" onClick={() => navigate('/deals')}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           Назад к списку фотосессий
@@ -93,9 +93,9 @@ export default function DealDetails() {
         <Card>
           <CardHeader>
             <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-              <div className="space-y-2">
-                <CardTitle className="text-2xl">{deal.title}</CardTitle>
-                <CardDescription className="flex flex-wrap items-center gap-2">
+              <div>
+                <CardTitle className="text-xl">{deal.title}</CardTitle>
+                <CardDescription className="flex flex-wrap items-center gap-2 mt-2">
                   <div className="flex items-center gap-1">
                     <Calendar className="h-4 w-4" />
                     <span>
@@ -108,7 +108,7 @@ export default function DealDetails() {
                   </div>
                   <Badge variant="outline">
                     <ExternalLink className="h-3 w-3 mr-1" />
-                    Источник: {deal.source}
+                    {deal.source}
                   </Badge>
                 </CardDescription>
               </div>
@@ -118,7 +118,7 @@ export default function DealDetails() {
                   deal.status === 'ready'
                     ? 'bg-success text-success-foreground'
                     : deal.status === 'processing'
-                    ? 'bg-primary/10 text-primary border-primary/20'
+                    ? 'bg-muted text-foreground'
                     : ''
                 }
               >
@@ -128,19 +128,19 @@ export default function DealDetails() {
           </CardHeader>
           <CardContent>
             {deal.description && (
-              <p className="text-muted-foreground">{deal.description}</p>
+              <p className="text-muted-foreground text-sm">{deal.description}</p>
             )}
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <ImageIcon className="h-5 w-5 text-primary" />
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <ImageIcon className="h-5 w-5" />
               Галерея фотографий
             </CardTitle>
             <CardDescription>
-              Фотографии хранятся в СХД • {photos.length} фото
+              {photos.length} фото
             </CardDescription>
           </CardHeader>
           <CardContent>

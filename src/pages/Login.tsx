@@ -32,20 +32,20 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-secondary/30 to-background flex items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-8">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <div className="w-full max-w-md space-y-6">
         <div className="text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-4">
-            <Camera className="h-8 w-8 text-primary" />
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded border border-border bg-card mb-3">
+            <Camera className="h-6 w-6 text-primary" />
           </div>
-          <h1 className="text-3xl font-bold text-foreground">КреативикФото</h1>
-          <p className="text-muted-foreground mt-2">Система управления фотосессиями</p>
+          <h1 className="text-2xl font-bold text-foreground">КреативикФото</h1>
+          <p className="text-muted-foreground text-sm mt-1">Система управления фотосессиями</p>
         </div>
 
-        <Card className="border-border/50 shadow-lg">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl text-center">Вход в личный кабинет</CardTitle>
-            <CardDescription className="text-center">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl text-center">Вход в личный кабинет</CardTitle>
+            <CardDescription className="text-center text-sm">
               Используйте T-ID для безопасной авторизации
             </CardDescription>
           </CardHeader>
@@ -53,14 +53,13 @@ export default function Login() {
             <Button
               onClick={handleLogin}
               disabled={isLoading}
-              className="w-full h-12 text-base"
-              size="lg"
+              className="w-full"
             >
-              <LogIn className="mr-2 h-5 w-5" />
+              <LogIn className="mr-2 h-4 w-4" />
               {isLoading ? 'Авторизация...' : 'Войти через T-ID'}
             </Button>
 
-            <div className="text-xs text-center text-muted-foreground pt-4 border-t">
+            <div className="text-xs text-center text-muted-foreground pt-3 border-t">
               <p>Демо-версия Sprint 2</p>
               <p className="mt-1">Авторизация через T-ID • Интеграция с Битрикс • СХД</p>
             </div>
