@@ -1,36 +1,48 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User as UserIcon, Mail, Phone, Bell, CheckCircle2, Image } from 'lucide-react';
+import { User as UserIcon, Mail, Phone, Bell, CheckCircle2, Image, Calendar, ExternalLink } from 'lucide-react';
 import { Header } from '@/components/Header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
 import { apiClient } from '@/lib/apiClient';
-import { User } from '@/types';
+import { User, Deal } from '@/types';
 import { Skeleton } from '@/components/ui/skeleton';
+
+const statusMap = {
+  processing: { label: 'В обработке', variant: 'default' as const },
+  ready: { label: 'Готово', variant: 'default' as const },
+  cancelled: { label: 'Отменена', variant: 'destructive' as const },
+};
 
 export default function Profile() {
   const [user, setUser] = useState<User | null>(null);
+  const [deals, setDeals] = useState<Deal[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [smsEnabled, setSmsEnabled] = useState(true);
   const [whatsappEnabled, setWhatsappEnabled] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const loadUser = async () => {
+    const loadData = async () => {
       try {
-        const userData = await apiClient.getCurrentUser();
+        const [userData, dealsData] = await Promise.all([
+          apiClient.getCurrentUser(),
+          apiClient.getDeals(),
+        ]);
         setUser(userData);
+        setDeals(dealsData);
         setSmsEnabled(userData.notificationSettings?.smsEnabled ?? true);
         setWhatsappEnabled(userData.notificationSettings?.whatsappEnabled ?? true);
       } catch (error) {
-        console.error('Ошибка загрузки профиля:', error);
+        console.error('Ошибка загрузки данных:', error);
       } finally {
         setIsLoading(false);
       }
     };
-    loadUser();
+    loadData();
   }, []);
 
   if (isLoading) {
@@ -150,10 +162,79 @@ export default function Profile() {
               </div>
             </div>
 
-            <Button onClick={() => navigate('/deals')}>
-              <Image className="mr-2 h-4 w-4" />
-              Перейти к фотосессиям
-            </Button>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Image className="h-5 w-5" />
+              Мои фотосессии
+            </CardTitle>
+            <CardDescription className="text-sm">
+              Сделки синхронизируются с Битрикс
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {deals.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-8">
+                <Image className="h-12 w-12 text-muted-foreground mb-4" />
+                <p className="text-sm text-muted-foreground">
+                  У вас пока нет фотосессий
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {deals.map((deal) => (
+                  <Card
+                    key={deal.id}
+                    className="cursor-pointer"
+                    onClick={() => navigate(`/deals/${deal.id}`)}
+                  >
+                    <CardContent className="p-3">
+                      <div className="flex flex-col gap-2">
+                        <div className="flex items-start justify-between gap-2">
+                          <h3 className="text-sm font-medium text-foreground">
+                            {deal.title}
+                          </h3>
+                          <Badge
+                            variant={statusMap[deal.status].variant}
+                            className={
+                              deal.status === 'ready'
+                                ? 'bg-success text-success-foreground'
+                                : deal.status === 'processing'
+                                ? 'bg-muted text-foreground'
+                                : ''
+                            }
+                          >
+                            {statusMap[deal.status].label}
+                          </Badge>
+                        </div>
+                        <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                          <div className="flex items-center gap-1">
+                            <Calendar className="h-3 w-3" />
+                            <span>
+                              {new Date(deal.date).toLocaleDateString('ru-RU', {
+                                day: 'numeric',
+                                month: 'long',
+                              })}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Image className="h-3 w-3" />
+                            <span>{deal.photosCount}</span>
+                          </div>
+                          <Badge variant="outline" className="text-xs">
+                            <ExternalLink className="h-3 w-3 mr-1" />
+                            {deal.source}
+                          </Badge>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
