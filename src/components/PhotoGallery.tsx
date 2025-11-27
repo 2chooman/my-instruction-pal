@@ -1,7 +1,5 @@
 import { useState } from 'react';
-import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Photo } from '@/types';
-import { Button } from '@/components/ui/button';
 
 interface PhotoGalleryProps {
   photos: Photo[];
@@ -12,12 +10,10 @@ export const PhotoGallery = ({ photos }: PhotoGalleryProps) => {
 
   const openLightbox = (index: number) => {
     setSelectedIndex(index);
-    document.body.style.overflow = 'hidden';
   };
 
   const closeLightbox = () => {
     setSelectedIndex(null);
-    document.body.style.overflow = 'auto';
   };
 
   const goToPrevious = () => {
@@ -32,84 +28,76 @@ export const PhotoGallery = ({ photos }: PhotoGalleryProps) => {
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Escape') closeLightbox();
-    if (e.key === 'ArrowLeft') goToPrevious();
-    if (e.key === 'ArrowRight') goToNext();
-  };
-
   return (
     <>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px' }}>
         {photos.map((photo, index) => (
-          <div
+          <img
             key={photo.id}
-            className="relative aspect-square overflow-hidden rounded-lg bg-muted cursor-pointer group"
+            src={photo.thumbnailUrl}
+            alt={`Фото ${index + 1}`}
+            style={{ width: '100%', cursor: 'pointer', border: '1px solid #ccc' }}
             onClick={() => openLightbox(index)}
-          >
-            <img
-              src={photo.thumbnailUrl}
-              alt={`Фото ${index + 1}`}
-              className="h-full w-full object-cover transition-transform group-hover:scale-110"
-            />
-            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
-          </div>
+          />
         ))}
       </div>
 
       {selectedIndex !== null && (
         <div
-          className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center"
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0,0,0,0.9)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+          }}
           onClick={closeLightbox}
-          onKeyDown={handleKeyDown}
-          tabIndex={0}
         >
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute top-4 right-4 text-white hover:bg-white/10"
+          <button
+            style={{ position: 'absolute', top: '10px', right: '10px', padding: '10px', fontSize: '20px', color: 'white' }}
             onClick={closeLightbox}
           >
-            <X className="h-6 w-6" />
-          </Button>
+            ✕
+          </button>
 
           {selectedIndex > 0 && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute left-4 text-white hover:bg-white/10"
+            <button
+              style={{ position: 'absolute', left: '10px', padding: '10px', fontSize: '30px', color: 'white' }}
               onClick={(e) => {
                 e.stopPropagation();
                 goToPrevious();
               }}
             >
-              <ChevronLeft className="h-8 w-8" />
-            </Button>
+              ‹
+            </button>
           )}
 
-          <div className="max-w-7xl max-h-[90vh] p-4" onClick={(e) => e.stopPropagation()}>
+          <div style={{ maxWidth: '90%', maxHeight: '90%' }} onClick={(e) => e.stopPropagation()}>
             <img
               src={photos[selectedIndex].url}
               alt={`Фото ${selectedIndex + 1}`}
-              className="max-w-full max-h-full object-contain"
+              style={{ maxWidth: '100%', maxHeight: '90vh' }}
             />
-            <p className="text-white text-center mt-4">
+            <p style={{ color: 'white', textAlign: 'center', marginTop: '10px' }}>
               {selectedIndex + 1} / {photos.length}
             </p>
           </div>
 
           {selectedIndex < photos.length - 1 && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute right-4 text-white hover:bg-white/10"
+            <button
+              style={{ position: 'absolute', right: '10px', padding: '10px', fontSize: '30px', color: 'white' }}
               onClick={(e) => {
                 e.stopPropagation();
                 goToNext();
               }}
             >
-              <ChevronRight className="h-8 w-8" />
-            </Button>
+              ›
+            </button>
           )}
         </div>
       )}

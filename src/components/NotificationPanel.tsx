@@ -1,12 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Send, Loader2, CheckCircle2, XCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { apiClient } from '@/lib/apiClient';
 import { NotificationTemplate, NotificationChannel, NotificationTest } from '@/types';
 import { useToast } from '@/hooks/use-toast';
@@ -94,144 +86,115 @@ export const NotificationPanel = ({ dealId, dealTitle, dealDate }: NotificationP
   };
 
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Управление уведомлениями</CardTitle>
-          <CardDescription>Настройте и отправьте тестовое уведомление клиенту</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="space-y-3">
-            <Label>Каналы отправки</Label>
-            <div className="flex flex-col gap-3">
-              <div className="flex items-center space-x-3 p-3 rounded-lg border border-border hover:bg-accent/5">
-                <Checkbox
-                  id="sms"
-                  checked={selectedChannels.includes('sms')}
-                  onCheckedChange={(checked) => {
-                    if (checked) {
-                      setSelectedChannels([...selectedChannels, 'sms']);
-                    } else {
-                      setSelectedChannels(selectedChannels.filter(c => c !== 'sms'));
-                    }
-                    setSelectedTemplateId('');
-                  }}
-                />
-                <Label htmlFor="sms" className="cursor-pointer flex-1">
-                  SMS (через SMS.RU)
-                </Label>
-              </div>
-              <div className="flex items-center space-x-3 p-3 rounded-lg border border-border hover:bg-accent/5">
-                <Checkbox
-                  id="whatsapp"
-                  checked={selectedChannels.includes('whatsapp')}
-                  onCheckedChange={(checked) => {
-                    if (checked) {
-                      setSelectedChannels([...selectedChannels, 'whatsapp']);
-                    } else {
-                      setSelectedChannels(selectedChannels.filter(c => c !== 'whatsapp'));
-                    }
-                    setSelectedTemplateId('');
-                  }}
-                />
-                <Label htmlFor="whatsapp" className="cursor-pointer flex-1">
-                  WhatsApp (через Meta Cloud API)
-                </Label>
-              </div>
-            </div>
-          </div>
+    <div style={{ fontFamily: 'Times New Roman, serif' }}>
+      <fieldset style={{ marginBottom: '20px', padding: '15px' }}>
+        <legend><strong>Управление уведомлениями</strong></legend>
+        <p><small>Настройте и отправьте тестовое уведомление клиенту</small></p>
+        
+        <h3>Каналы отправки</h3>
+        <div>
+          <input
+            type="checkbox"
+            id="sms-channel"
+            checked={selectedChannels.includes('sms')}
+            onChange={(e) => {
+              if (e.target.checked) {
+                setSelectedChannels([...selectedChannels, 'sms']);
+              } else {
+                setSelectedChannels(selectedChannels.filter(c => c !== 'sms'));
+              }
+              setSelectedTemplateId('');
+            }}
+          />
+          <label htmlFor="sms-channel"> SMS (через SMS.RU)</label>
+        </div>
+        <div>
+          <input
+            type="checkbox"
+            id="whatsapp-channel"
+            checked={selectedChannels.includes('whatsapp')}
+            onChange={(e) => {
+              if (e.target.checked) {
+                setSelectedChannels([...selectedChannels, 'whatsapp']);
+              } else {
+                setSelectedChannels(selectedChannels.filter(c => c !== 'whatsapp'));
+              }
+              setSelectedTemplateId('');
+            }}
+          />
+          <label htmlFor="whatsapp-channel"> WhatsApp (через Meta Cloud API)</label>
+        </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="template">Шаблон уведомления</Label>
-            <Select value={selectedTemplateId} onValueChange={setSelectedTemplateId}>
-              <SelectTrigger id="template">
-                <SelectValue placeholder="Выберите шаблон" />
-              </SelectTrigger>
-              <SelectContent>
-                {availableTemplates.map((template) => (
-                  <SelectItem key={template.id} value={template.id}>
-                    {template.name} ({template.channel.toUpperCase()})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {selectedTemplate && (
-            <div className="p-4 rounded-lg bg-muted space-y-2">
-              <Label className="text-sm font-medium">Превью текста:</Label>
-              <p className="text-sm text-foreground">{formatTemplateText(selectedTemplate.text)}</p>
-            </div>
-          )}
-
-          <div className="space-y-2">
-            <Label htmlFor="phone">Номер телефона для тестовой отправки</Label>
-            <Input
-              id="phone"
-              type="tel"
-              placeholder="+7 (999) 123-45-67"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-            />
-          </div>
-
-          <Button 
-            onClick={handleSendTest} 
-            disabled={isLoading || !selectedTemplateId || !phone}
-            className="w-full"
-            size="lg"
+        <div style={{ marginTop: '15px' }}>
+          <label htmlFor="template"><strong>Шаблон уведомления:</strong></label><br />
+          <select 
+            id="template" 
+            value={selectedTemplateId} 
+            onChange={(e) => setSelectedTemplateId(e.target.value)}
+            style={{ width: '100%', padding: '5px', marginTop: '5px' }}
           >
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Отправка...
-              </>
-            ) : (
-              <>
-                <Send className="mr-2 h-4 w-4" />
-                Отправить тестовое уведомление
-              </>
-            )}
-          </Button>
-        </CardContent>
-      </Card>
+            <option value="">Выберите шаблон</option>
+            {availableTemplates.map((template) => (
+              <option key={template.id} value={template.id}>
+                {template.name} ({template.channel.toUpperCase()})
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {selectedTemplate && (
+          <div style={{ marginTop: '15px', padding: '10px', backgroundColor: '#f5f5f5', border: '1px solid #ccc' }}>
+            <strong>Превью текста:</strong>
+            <p>{formatTemplateText(selectedTemplate.text)}</p>
+          </div>
+        )}
+
+        <div style={{ marginTop: '15px' }}>
+          <label htmlFor="phone"><strong>Номер телефона для тестовой отправки:</strong></label><br />
+          <input
+            id="phone"
+            type="tel"
+            placeholder="+7 (999) 123-45-67"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            style={{ width: '100%', padding: '5px', marginTop: '5px' }}
+          />
+        </div>
+
+        <button 
+          onClick={handleSendTest} 
+          disabled={isLoading || !selectedTemplateId || !phone}
+          style={{ marginTop: '15px', padding: '10px 20px', cursor: isLoading ? 'not-allowed' : 'pointer' }}
+        >
+          {isLoading ? 'Отправка...' : 'Отправить тестовое уведомление'}
+        </button>
+      </fieldset>
 
       {recentTests.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Тестовые уведомления</CardTitle>
-            <CardDescription>Последние 5 отправок по данной фотосессии</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
+        <fieldset style={{ padding: '15px' }}>
+          <legend><strong>Тестовые уведомления</strong></legend>
+          <p><small>Последние 5 отправок по данной фотосессии</small></p>
+          <table border={1} cellPadding={10} style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr>
+                <th>Статус</th>
+                <th>Телефон</th>
+                <th>Дата</th>
+                <th>Канал</th>
+              </tr>
+            </thead>
+            <tbody>
               {recentTests.map((test) => (
-                <div
-                  key={test.id}
-                  className="flex items-center justify-between p-4 rounded-lg border border-border"
-                >
-                  <div className="flex items-center gap-3 flex-1">
-                    {test.status === 'success' ? (
-                      <CheckCircle2 className="h-5 w-5 text-success flex-shrink-0" />
-                    ) : (
-                      <XCircle className="h-5 w-5 text-destructive flex-shrink-0" />
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-foreground">
-                        {test.phone}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {new Date(test.createdAt).toLocaleString('ru-RU')}
-                      </p>
-                    </div>
-                  </div>
-                  <Badge variant="outline" className="ml-2">
-                    {test.channel.toUpperCase()}
-                  </Badge>
-                </div>
+                <tr key={test.id}>
+                  <td>{test.status === 'success' ? '✓ Успешно' : '✗ Ошибка'}</td>
+                  <td>{test.phone}</td>
+                  <td>{new Date(test.createdAt).toLocaleString('ru-RU')}</td>
+                  <td>{test.channel.toUpperCase()}</td>
+                </tr>
               ))}
-            </div>
-          </CardContent>
-        </Card>
+            </tbody>
+          </table>
+        </fieldset>
       )}
     </div>
   );

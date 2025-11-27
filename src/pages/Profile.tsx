@@ -1,23 +1,14 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { User as UserIcon, Mail, Phone, Bell, CheckCircle2, Image, Calendar, ChevronDown, Edit2, MessageSquare, Send } from 'lucide-react';
 import { Header } from '@/components/Header';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
 import { apiClient } from '@/lib/apiClient';
 import { User, Deal, Photo } from '@/types';
-import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 
 const statusMap = {
-  processing: { label: 'В обработке', variant: 'default' as const },
-  ready: { label: 'Готово', variant: 'default' as const },
-  cancelled: { label: 'Отменена', variant: 'destructive' as const },
-  pending_payment: { label: 'Ждет оплаты', variant: 'secondary' as const },
+  processing: 'В обработке',
+  ready: 'Готово',
+  cancelled: 'Отменена',
+  pending_payment: 'Ждет оплаты',
 };
 
 export default function Profile() {
@@ -30,7 +21,6 @@ export default function Profile() {
   const [whatsappEnabled, setWhatsappEnabled] = useState(true);
   const [editingField, setEditingField] = useState<'name' | 'phone' | 'email' | null>(null);
   const [editValue, setEditValue] = useState('');
-  const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -101,12 +91,8 @@ export default function Profile() {
     return (
       <>
         <Header />
-        <div className="container mx-auto p-4 md:p-8 max-w-4xl">
-          <Skeleton className="h-8 w-48 mb-6" />
-          <div className="space-y-4">
-            <Skeleton className="h-48 w-full" />
-            <Skeleton className="h-64 w-full" />
-          </div>
+        <div style={{ padding: '20px', fontFamily: 'Times New Roman, serif' }}>
+          <p>Загрузка...</p>
         </div>
       </>
     );
@@ -116,12 +102,8 @@ export default function Profile() {
     return (
       <>
         <Header />
-        <div className="container mx-auto p-4 md:p-8 max-w-4xl">
-          <Card>
-            <CardContent className="pt-6">
-              <p className="text-center text-muted-foreground">Не удалось загрузить профиль</p>
-            </CardContent>
-          </Card>
+        <div style={{ padding: '20px', fontFamily: 'Times New Roman, serif' }}>
+          <p>Не удалось загрузить профиль</p>
         </div>
       </>
     );
@@ -130,282 +112,162 @@ export default function Profile() {
   return (
     <>
       <Header userName={user.name} />
-      <div className="container mx-auto p-4 max-w-4xl space-y-4">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Личный кабинет</h1>
-          <p className="text-muted-foreground text-sm">Управление профилем и настройками</p>
+      <div style={{ padding: '20px', fontFamily: 'Times New Roman, serif' }}>
+        <h1>Личный кабинет</h1>
+        <p>Управление профилем и настройками</p>
+        <hr />
+
+        <h2>Информация о пользователе</h2>
+        <p><small>Данные получены из T-ID</small></p>
+        <table border={1} cellPadding={10} style={{ borderCollapse: 'collapse', marginBottom: '20px' }}>
+          <tbody>
+            <tr>
+              <td><strong>ФИО</strong></td>
+              <td>
+                {editingField === 'name' ? (
+                  <div>
+                    <input
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value)}
+                      style={{ marginRight: '5px' }}
+                    />
+                    <button onClick={saveEdit}>Сохранить</button>
+                    <button onClick={cancelEdit}>Отмена</button>
+                  </div>
+                ) : (
+                  <div>
+                    {user.name}{' '}
+                    <button onClick={() => startEditing('name', user.name)}>✎</button>
+                  </div>
+                )}
+              </td>
+            </tr>
+            <tr>
+              <td><strong>Телефон</strong></td>
+              <td>
+                {editingField === 'phone' ? (
+                  <div>
+                    <input
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value)}
+                      style={{ marginRight: '5px' }}
+                    />
+                    <button onClick={saveEdit}>Сохранить</button>
+                    <button onClick={cancelEdit}>Отмена</button>
+                  </div>
+                ) : (
+                  <div>
+                    {user.phone}{' '}
+                    <button onClick={() => startEditing('phone', user.phone)}>✎</button>
+                  </div>
+                )}
+              </td>
+            </tr>
+            <tr>
+              <td><strong>E-mail</strong></td>
+              <td>
+                {editingField === 'email' ? (
+                  <div>
+                    <input
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value)}
+                      style={{ marginRight: '5px' }}
+                    />
+                    <button onClick={saveEdit}>Сохранить</button>
+                    <button onClick={cancelEdit}>Отмена</button>
+                  </div>
+                ) : (
+                  <div>
+                    {user.email}{' '}
+                    <button onClick={() => startEditing('email', user.email)}>✎</button>
+                  </div>
+                )}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2>Настройки уведомлений</h2>
+        <p>Выберите каналы для получения уведомлений</p>
+        <div style={{ marginBottom: '20px' }}>
+          <div style={{ marginBottom: '10px' }}>
+            <input
+              type="checkbox"
+              id="sms"
+              checked={smsEnabled}
+              onChange={(e) => setSmsEnabled(e.target.checked)}
+            />
+            <label htmlFor="sms"> SMS уведомления (SMS.RU) {smsEnabled && '✓'}</label>
+          </div>
+          <div>
+            <input
+              type="checkbox"
+              id="whatsapp"
+              checked={whatsappEnabled}
+              onChange={(e) => setWhatsappEnabled(e.target.checked)}
+            />
+            <label htmlFor="whatsapp"> WhatsApp (Meta Cloud API) {whatsappEnabled && '✓'}</label>
+          </div>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <UserIcon className="h-5 w-5" />
-              Информация о пользователе
-            </CardTitle>
-            <CardDescription className="text-sm">Данные получены из T-ID</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="grid gap-3">
-              <div className="flex items-center gap-2">
-                <UserIcon className="h-4 w-4 text-muted-foreground" />
-                <div className="flex-1">
-                  <p className="text-xs text-muted-foreground">ФИО</p>
-                  {editingField === 'name' ? (
-                    <div className="flex gap-2 mt-1">
-                      <Input
-                        value={editValue}
-                        onChange={(e) => setEditValue(e.target.value)}
-                        className="h-7 text-sm"
-                      />
-                      <Button size="sm" onClick={saveEdit} className="h-7">Сохранить</Button>
-                      <Button size="sm" variant="ghost" onClick={cancelEdit} className="h-7">Отмена</Button>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-2">
-                      <p className="text-sm font-medium text-foreground">{user.name}</p>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        className="h-6 w-6"
-                        onClick={() => startEditing('name', user.name)}
-                      >
-                        <Edit2 className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  )}
+        <h2>Мои фотосессии</h2>
+        <p><small>Сделки синхронизируются с Битрикс</small></p>
+        
+        {deals.length === 0 ? (
+          <p>У вас пока нет фотосессий</p>
+        ) : (
+          <div>
+            {deals.map((deal) => (
+              <fieldset key={deal.id} style={{ marginBottom: '15px', border: '1px solid #ccc', padding: '10px' }}>
+                <legend onClick={() => toggleDeal(deal.id)} style={{ cursor: 'pointer', fontWeight: 'bold' }}>
+                  {deal.title} - {statusMap[deal.status]} {expandedDeal === deal.id ? '▼' : '▶'}
+                </legend>
+                <div>
+                  <p>
+                    <small>
+                      Дата: {new Date(deal.date).toLocaleDateString('ru-RU', {
+                        day: 'numeric',
+                        month: 'long',
+                      })} | Фото: {deal.photosCount}
+                    </small>
+                  </p>
+                  <button onClick={(e) => {
+                    e.stopPropagation();
+                    sendNotification('sms', deal.title);
+                  }}>
+                    Отправить статус в СМС
+                  </button>
+                  {' '}
+                  <button onClick={(e) => {
+                    e.stopPropagation();
+                    sendNotification('whatsapp', deal.title);
+                  }}>
+                    Отправить статус в WhatsApp
+                  </button>
                 </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Phone className="h-4 w-4 text-muted-foreground" />
-                <div className="flex-1">
-                  <p className="text-xs text-muted-foreground">Телефон</p>
-                  {editingField === 'phone' ? (
-                    <div className="flex gap-2 mt-1">
-                      <Input
-                        value={editValue}
-                        onChange={(e) => setEditValue(e.target.value)}
-                        className="h-7 text-sm"
-                      />
-                      <Button size="sm" onClick={saveEdit} className="h-7">Сохранить</Button>
-                      <Button size="sm" variant="ghost" onClick={cancelEdit} className="h-7">Отмена</Button>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-2">
-                      <p className="text-sm font-medium text-foreground">{user.phone}</p>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        className="h-6 w-6"
-                        onClick={() => startEditing('phone', user.phone)}
-                      >
-                        <Edit2 className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Mail className="h-4 w-4 text-muted-foreground" />
-                <div className="flex-1">
-                  <p className="text-xs text-muted-foreground">E-mail</p>
-                  {editingField === 'email' ? (
-                    <div className="flex gap-2 mt-1">
-                      <Input
-                        value={editValue}
-                        onChange={(e) => setEditValue(e.target.value)}
-                        className="h-7 text-sm"
-                      />
-                      <Button size="sm" onClick={saveEdit} className="h-7">Сохранить</Button>
-                      <Button size="sm" variant="ghost" onClick={cancelEdit} className="h-7">Отмена</Button>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-2">
-                      <p className="text-sm font-medium text-foreground">{user.email}</p>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        className="h-6 w-6"
-                        onClick={() => startEditing('email', user.email)}
-                      >
-                        <Edit2 className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <Bell className="h-5 w-5" />
-              Настройки уведомлений
-            </CardTitle>
-            <CardDescription className="text-sm">
-              Выберите каналы для получения уведомлений
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-3">
-              <div className="flex items-center space-x-2 p-3 rounded border border-border">
-                <Checkbox
-                  id="sms"
-                  checked={smsEnabled}
-                  onCheckedChange={(checked) => setSmsEnabled(checked as boolean)}
-                />
-                <Label htmlFor="sms" className="flex-1 cursor-pointer text-sm">
-                  <div className="flex items-center gap-2">
-                    <span>SMS уведомления (SMS.RU)</span>
-                    {smsEnabled && <CheckCircle2 className="h-4 w-4 text-success" />}
-                  </div>
-                </Label>
-              </div>
-
-              <div className="flex items-center space-x-2 p-3 rounded border border-border">
-                <Checkbox
-                  id="whatsapp"
-                  checked={whatsappEnabled}
-                  onCheckedChange={(checked) => setWhatsappEnabled(checked as boolean)}
-                />
-                <Label htmlFor="whatsapp" className="flex-1 cursor-pointer text-sm">
-                  <div className="flex items-center gap-2">
-                    <span>WhatsApp (Meta Cloud API)</span>
-                    {whatsappEnabled && <CheckCircle2 className="h-4 w-4 text-success" />}
-                  </div>
-                </Label>
-              </div>
-            </div>
-
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <Image className="h-5 w-5" />
-              Мои фотосессии
-            </CardTitle>
-            <CardDescription className="text-sm">
-              Сделки синхронизируются с Битрикс
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {deals.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-8">
-                <Image className="h-12 w-12 text-muted-foreground mb-4" />
-                <p className="text-sm text-muted-foreground">
-                  У вас пока нет фотосессий
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {deals.map((deal) => (
-                  <Card key={deal.id}>
-                    <CardContent className="p-3">
-                      <div 
-                        className="flex flex-col gap-2 cursor-pointer"
-                        onClick={() => toggleDeal(deal.id)}
-                      >
-                        <div className="flex items-start justify-between gap-2">
-                          <h3 className="text-sm font-medium text-foreground">
-                            {deal.title}
-                          </h3>
-                          <div className="flex items-center gap-2">
-                            <Badge
-                              variant={statusMap[deal.status].variant}
-                              className={
-                                deal.status === 'ready'
-                                  ? 'bg-success text-success-foreground'
-                                  : deal.status === 'processing'
-                                  ? 'bg-muted text-foreground'
-                                  : ''
-                              }
-                            >
-                              {statusMap[deal.status].label}
-                            </Badge>
-                            <ChevronDown 
-                              className={`h-4 w-4 transition-transform ${
-                                expandedDeal === deal.id ? 'rotate-180' : ''
-                              }`}
-                            />
-                          </div>
-                        </div>
-                        <div className="flex flex-col gap-2">
-                          <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                            <div className="flex items-center gap-1">
-                              <Calendar className="h-3 w-3" />
-                              <span>
-                                {new Date(deal.date).toLocaleDateString('ru-RU', {
-                                  day: 'numeric',
-                                  month: 'long',
-                                })}
-                              </span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Image className="h-3 w-3" />
-                              <span>{deal.photosCount}</span>
-                            </div>
-                          </div>
-                          <div className="flex gap-2">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="h-7 text-xs"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                sendNotification('sms', deal.title);
-                              }}
-                            >
-                              <MessageSquare className="h-3 w-3 mr-1" />
-                              СМС
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="h-7 text-xs"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                sendNotification('whatsapp', deal.title);
-                              }}
-                            >
-                              <Send className="h-3 w-3 mr-1" />
-                              WhatsApp
-                            </Button>
-                          </div>
-                        </div>
+                
+                {expandedDeal === deal.id && (
+                  <div style={{ marginTop: '10px', paddingTop: '10px', borderTop: '1px solid #ccc' }}>
+                    {photos[deal.id] ? (
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+                        {photos[deal.id].map((photo) => (
+                          <img
+                            key={photo.id}
+                            src={photo.thumbnailUrl}
+                            alt="Фото"
+                            style={{ width: '100%', height: '100px', objectFit: 'cover' }}
+                          />
+                        ))}
                       </div>
-                      
-                      {expandedDeal === deal.id && (
-                        <div className="mt-3 pt-3 border-t border-border">
-                          {photos[deal.id] ? (
-                            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                              {photos[deal.id].map((photo) => (
-                                <img
-                                  key={photo.id}
-                                  src={photo.thumbnailUrl}
-                                  alt="Фото"
-                                  className="w-full h-24 object-cover rounded"
-                                />
-                              ))}
-                            </div>
-                          ) : (
-                            <div className="flex justify-center py-4">
-                              <div className="text-xs text-muted-foreground">Загрузка...</div>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                    ) : (
+                      <p>Загрузка...</p>
+                    )}
+                  </div>
+                )}
+              </fieldset>
+            ))}
+          </div>
+        )}
       </div>
     </>
   );

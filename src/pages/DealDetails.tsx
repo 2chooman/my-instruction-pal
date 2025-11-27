@@ -1,20 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Calendar, ExternalLink, Loader2, Image as ImageIcon } from 'lucide-react';
 import { Header } from '@/components/Header';
-import { PhotoGallery } from '@/components/PhotoGallery';
-import { NotificationPanel } from '@/components/NotificationPanel';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { apiClient } from '@/lib/apiClient';
 import { DealDetails as DealDetailsType, Photo, User } from '@/types';
-import { Skeleton } from '@/components/ui/skeleton';
 
 const statusMap = {
-  processing: { label: 'В обработке', variant: 'default' as const },
-  ready: { label: 'Готово', variant: 'default' as const },
-  cancelled: { label: 'Отменена', variant: 'destructive' as const },
+  processing: 'В обработке',
+  ready: 'Готово',
+  cancelled: 'Отменена',
 };
 
 export default function DealDetails() {
@@ -24,6 +17,7 @@ export default function DealDetails() {
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedPhoto, setSelectedPhoto] = useState<number | null>(null);
 
   useEffect(() => {
     const loadData = async () => {
@@ -51,12 +45,8 @@ export default function DealDetails() {
     return (
       <>
         <Header />
-        <div className="container mx-auto p-4 md:p-8 max-w-7xl">
-          <Skeleton className="h-10 w-32 mb-6" />
-          <div className="space-y-6">
-            <Skeleton className="h-48 w-full" />
-            <Skeleton className="h-96 w-full" />
-          </div>
+        <div style={{ padding: '20px', fontFamily: 'Times New Roman, serif' }}>
+          <p>Загрузка...</p>
         </div>
       </>
     );
@@ -66,16 +56,9 @@ export default function DealDetails() {
     return (
       <>
         <Header />
-        <div className="container mx-auto p-4 md:p-8 max-w-7xl">
-          <Button variant="ghost" onClick={() => navigate('/deals')}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Назад к списку
-          </Button>
-          <Card className="mt-6">
-            <CardContent className="pt-6">
-              <p className="text-center text-muted-foreground">Фотосессия не найдена</p>
-            </CardContent>
-          </Card>
+        <div style={{ padding: '20px', fontFamily: 'Times New Roman, serif' }}>
+          <button onClick={() => navigate('/profile')}>← Назад к списку</button>
+          <p>Фотосессия не найдена</p>
         </div>
       </>
     );
@@ -84,82 +67,75 @@ export default function DealDetails() {
   return (
     <>
       <Header userName={user?.name} />
-      <div className="container mx-auto p-4 max-w-7xl space-y-4">
-        <Button variant="ghost" onClick={() => navigate('/deals')}>
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Назад к списку фотосессий
-        </Button>
+      <div style={{ padding: '20px', fontFamily: 'Times New Roman, serif' }}>
+        <button onClick={() => navigate('/profile')}>← Назад к списку фотосессий</button>
+        <hr />
+        
+        <h1>{deal.title}</h1>
+        <p>
+          Дата: {new Date(deal.date).toLocaleDateString('ru-RU', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+          })}
+        </p>
+        <p>Источник: {deal.source}</p>
+        <p><strong>Статус: {statusMap[deal.status]}</strong></p>
+        {deal.description && <p>{deal.description}</p>}
+        
+        <hr />
+        
+        <h2>Галерея фотографий ({photos.length} фото)</h2>
+        {photos.length === 0 ? (
+          <p>Фотографии еще не загружены</p>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px' }}>
+            {photos.map((photo, index) => (
+              <img
+                key={photo.id}
+                src={photo.thumbnailUrl}
+                alt={`Фото ${index + 1}`}
+                style={{ width: '100%', cursor: 'pointer', border: '1px solid #ccc' }}
+                onClick={() => setSelectedPhoto(index)}
+              />
+            ))}
+          </div>
+        )}
 
-        <Card>
-          <CardHeader>
-            <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-              <div>
-                <CardTitle className="text-xl">{deal.title}</CardTitle>
-                <CardDescription className="flex flex-wrap items-center gap-2 mt-2">
-                  <div className="flex items-center gap-1">
-                    <Calendar className="h-4 w-4" />
-                    <span>
-                      {new Date(deal.date).toLocaleDateString('ru-RU', {
-                        day: 'numeric',
-                        month: 'long',
-                        year: 'numeric',
-                      })}
-                    </span>
-                  </div>
-                  <Badge variant="outline">
-                    <ExternalLink className="h-3 w-3 mr-1" />
-                    {deal.source}
-                  </Badge>
-                </CardDescription>
-              </div>
-              <Badge
-                variant={statusMap[deal.status].variant}
-                className={
-                  deal.status === 'ready'
-                    ? 'bg-success text-success-foreground'
-                    : deal.status === 'processing'
-                    ? 'bg-muted text-foreground'
-                    : ''
-                }
+        {selectedPhoto !== null && (
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(0,0,0,0.9)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 1000,
+            }}
+            onClick={() => setSelectedPhoto(null)}
+          >
+            <div style={{ position: 'relative', maxWidth: '90%', maxHeight: '90%' }}>
+              <button
+                style={{ position: 'absolute', top: '10px', right: '10px', padding: '10px', fontSize: '20px' }}
+                onClick={() => setSelectedPhoto(null)}
               >
-                {statusMap[deal.status].label}
-              </Badge>
+                ✕
+              </button>
+              <img
+                src={photos[selectedPhoto].url}
+                alt={`Фото ${selectedPhoto + 1}`}
+                style={{ maxWidth: '100%', maxHeight: '90vh' }}
+              />
+              <p style={{ color: 'white', textAlign: 'center', marginTop: '10px' }}>
+                {selectedPhoto + 1} / {photos.length}
+              </p>
             </div>
-          </CardHeader>
-          <CardContent>
-            {deal.description && (
-              <p className="text-muted-foreground text-sm">{deal.description}</p>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <ImageIcon className="h-5 w-5" />
-              Галерея фотографий
-            </CardTitle>
-            <CardDescription>
-              {photos.length} фото
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {photos.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12">
-                <ImageIcon className="h-12 w-12 text-muted-foreground mb-4" />
-                <p className="text-muted-foreground">Фотографии еще не загружены</p>
-              </div>
-            ) : (
-              <PhotoGallery photos={photos} />
-            )}
-          </CardContent>
-        </Card>
-
-        <NotificationPanel 
-          dealId={deal.id} 
-          dealTitle={deal.title}
-          dealDate={deal.date}
-        />
+          </div>
+        )}
       </div>
     </>
   );
