@@ -29,15 +29,6 @@ export const Header = ({ userName }: HeaderProps) => {
               <User className="h-4 w-4" />
               Профиль
             </Link>
-            <Link
-              to="/deals"
-              className={`flex items-center gap-1 text-sm ${
-                location.pathname.startsWith('/deals') ? 'text-primary' : 'text-muted-foreground'
-              }`}
-            >
-              <Image className="h-4 w-4" />
-              Фотосессии
-            </Link>
           </nav>
         )}
 
