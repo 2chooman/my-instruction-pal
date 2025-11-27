@@ -1,8 +1,5 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Camera, LogIn } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { apiClient } from '@/lib/apiClient';
 import { useToast } from '@/hooks/use-toast';
 
@@ -32,40 +29,30 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-6">
-        <div className="text-center">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded border border-border bg-card mb-3">
-            <Camera className="h-6 w-6 text-primary" />
-          </div>
-          <h1 className="text-2xl font-bold text-foreground">КреативикФото</h1>
-          <p className="text-muted-foreground text-sm mt-1">Система управления фотосессиями</p>
-        </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-xl text-center">Вход в личный кабинет</CardTitle>
-            <CardDescription className="text-center text-sm">
-              Используйте T-ID для безопасной авторизации
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Button
-              onClick={handleLogin}
-              disabled={isLoading}
-              className="w-full"
-            >
-              <LogIn className="mr-2 h-4 w-4" />
-              {isLoading ? 'Авторизация...' : 'Войти через T-ID'}
-            </Button>
-
-            <div className="text-xs text-center text-muted-foreground pt-3 border-t">
-              <p>Демо-версия Sprint 2</p>
-              <p className="mt-1">Авторизация через T-ID • Интеграция с Битрикс • СХД</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+    <div style={{ padding: '20px', fontFamily: 'monospace' }}>
+      <h1>КреативикФото</h1>
+      <p>Система управления фотосессиями</p>
+      <hr />
+      <br />
+      <h2>Вход в личный кабинет</h2>
+      <p>Используйте T-ID для безопасной авторизации</p>
+      <br />
+      <button 
+        onClick={handleLogin} 
+        disabled={isLoading}
+        style={{ 
+          padding: '10px 20px',
+          cursor: isLoading ? 'not-allowed' : 'pointer',
+          opacity: isLoading ? 0.6 : 1
+        }}
+      >
+        {isLoading ? 'Авторизация...' : 'Войти через T-ID'}
+      </button>
+      <br /><br />
+      <hr />
+      <small>Демо-версия Sprint 2</small>
+      <br />
+      <small>Авторизация через T-ID • Интеграция с Битрикс • СХД</small>
     </div>
   );
 }
