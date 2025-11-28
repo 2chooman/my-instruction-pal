@@ -29,7 +29,7 @@ export default function Login() {
   };
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'monospace' }}>
+    <div style={{ padding: '20px', fontFamily: 'Times New Roman, serif' }}>
       <h1>КреативикФото</h1>
       <p>Система управления фотосессиями</p>
       <hr />
