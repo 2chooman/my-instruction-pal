@@ -214,7 +214,7 @@ export default function Profile() {
                   <button onClick={e => {
               e.stopPropagation();
               sendNotification('sms', deal.title);
-            }}>
+            }} className="mx-[10px] my-[10px] px-[10px] py-[10px] bg-gray-200 hover:bg-gray-100">
                     Отправить статус в СМС
                   </button>
                   {' '}
