@@ -31,12 +31,12 @@ export default function Login() {
     padding: '20px',
     fontFamily: 'Times New Roman, serif'
   }}>
-      <h1>КреативикФото</h1>
-      <p>Система управления фотосессиями</p>
+      <h1 className="text-xl">КреативикФото</h1>
+      <p className="text-sm">Система управления фотосессиями</p>
       <hr />
       <br />
-      <h2>Вход в личный кабинет</h2>
-      <p>Используйте T-ID для безопасной авторизации</p>
+      <h2 className="text-2xl">Вход в личный кабинет</h2>
+      <p className="text-sm">Используйте T-ID для безопасной авторизации</p>
       <br />
       <button onClick={handleLogin} disabled={isLoading} style={{
       padding: '10px 20px',
