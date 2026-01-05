@@ -28,27 +28,51 @@ const mockUser: User = {
 const mockDeals: Deal[] = [
   {
     id: '1',
-    title: 'Семейная фотосессия в студии',
-    date: '2024-11-15',
+    title: 'Солнышко, улыбнись!',
+    date: '2025-04-05',
     status: 'ready',
     source: 'bitrix',
-    photosCount: 5,
+    photosCount: 16,
   },
   {
     id: '2',
-    title: 'Свадебная съемка',
-    date: '2024-11-20',
-    status: 'processing',
+    title: 'Радость к нам приходит',
+    date: '2024-12-20',
+    status: 'pending_payment',
     source: 'bitrix',
-    photosCount: 5,
+    photosCount: 12,
   },
   {
     id: '3',
-    title: 'Детская фотосессия',
-    date: '2024-11-10',
-    status: 'pending_payment',
+    title: 'Мир',
+    date: '2024-11-18',
+    status: 'processing',
     source: 'bitrix',
-    photosCount: 5,
+    photosCount: 8,
+  },
+  {
+    id: '4',
+    title: 'Осенние забавы',
+    date: '2024-10-10',
+    status: 'ready',
+    source: 'bitrix',
+    photosCount: 10,
+  },
+  {
+    id: '5',
+    title: 'Верю в тебя',
+    date: '2024-09-17',
+    status: 'ready',
+    source: 'bitrix',
+    photosCount: 14,
+  },
+  {
+    id: '6',
+    title: 'Прованс',
+    date: '2024-08-05',
+    status: 'ready',
+    source: 'bitrix',
+    photosCount: 9,
   },
 ];
 
@@ -75,17 +99,32 @@ const mockPhotos: Record<string, Photo[]> = {
 
 const mockGroups: Record<string, PhotoGroup[]> = {
   '1': [
-    { id: 'group-1-1', dealId: '1', name: 'Общие семейные', coverUrl: 'https://images.unsplash.com/photo-1511285560714-e5c4f6cc508e?w=400&h=300&fit=crop', photosCount: 3 },
-    { id: 'group-1-2', dealId: '1', name: 'Портреты', coverUrl: 'https://images.unsplash.com/photo-1511285560814-e5c4f6cc508e?w=400&h=300&fit=crop', photosCount: 2 },
+    { id: 'group-1-1', dealId: '1', name: 'Младшая группа А', coverUrl: 'https://images.unsplash.com/photo-1511285560714-e5c4f6cc508e?w=400&h=300&fit=crop', photosCount: 16 },
+    { id: 'group-1-2', dealId: '1', name: 'Младшая группа Б', coverUrl: 'https://images.unsplash.com/photo-1511285560814-e5c4f6cc508e?w=400&h=300&fit=crop', photosCount: 12 },
+    { id: 'group-1-3', dealId: '1', name: 'Младшая группа В', coverUrl: 'https://images.unsplash.com/photo-1511285560914-e5c4f6cc508e?w=400&h=300&fit=crop', photosCount: 8 },
+    { id: 'group-1-4', dealId: '1', name: 'Средняя группа А', coverUrl: 'https://images.unsplash.com/photo-1511285561014-e5c4f6cc508e?w=400&h=300&fit=crop', photosCount: 10 },
+    { id: 'group-1-5', dealId: '1', name: 'Средняя группа Б', coverUrl: 'https://images.unsplash.com/photo-1511285561114-e5c4f6cc508e?w=400&h=300&fit=crop', photosCount: 14 },
+    { id: 'group-1-6', dealId: '1', name: 'Старшая группа А', coverUrl: 'https://images.unsplash.com/photo-1511285561214-e5c4f6cc508e?w=400&h=300&fit=crop', photosCount: 9 },
+    { id: 'group-1-7', dealId: '1', name: 'Старшая группа Б', coverUrl: 'https://images.unsplash.com/photo-1511285561314-e5c4f6cc508e?w=400&h=300&fit=crop', photosCount: 11 },
+    { id: 'group-1-8', dealId: '1', name: 'Старшая группа В', coverUrl: 'https://images.unsplash.com/photo-1511285561414-e5c4f6cc508e?w=400&h=300&fit=crop', photosCount: 7 },
   ],
   '2': [
-    { id: 'group-2-1', dealId: '2', name: 'Церемония', coverUrl: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=400&h=300&fit=crop', photosCount: 3 },
-    { id: 'group-2-2', dealId: '2', name: 'Банкет', coverUrl: 'https://images.unsplash.com/photo-1519741497774-611481863552?w=400&h=300&fit=crop', photosCount: 2 },
-    { id: 'group-2-3', dealId: '2', name: 'Прогулка', coverUrl: 'https://images.unsplash.com/photo-1519741497874-611481863552?w=400&h=300&fit=crop', photosCount: 2, parentId: 'group-2-1' },
+    { id: 'group-2-1', dealId: '2', name: 'Группа 1', coverUrl: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=400&h=300&fit=crop', photosCount: 6 },
+    { id: 'group-2-2', dealId: '2', name: 'Группа 2', coverUrl: 'https://images.unsplash.com/photo-1519741497774-611481863552?w=400&h=300&fit=crop', photosCount: 6 },
   ],
   '3': [
-    { id: 'group-3-1', dealId: '3', name: 'Игровая зона', coverUrl: 'https://images.unsplash.com/photo-1503454537195-e3c0a30ad1c3?w=400&h=300&fit=crop', photosCount: 3 },
-    { id: 'group-3-2', dealId: '3', name: 'Костюмы', coverUrl: 'https://images.unsplash.com/photo-1503454537295-e3c0a30ad1c3?w=400&h=300&fit=crop', photosCount: 2 },
+    { id: 'group-3-1', dealId: '3', name: 'Основная группа', coverUrl: 'https://images.unsplash.com/photo-1503454537195-e3c0a30ad1c3?w=400&h=300&fit=crop', photosCount: 8 },
+  ],
+  '4': [
+    { id: 'group-4-1', dealId: '4', name: 'Группа А', coverUrl: 'https://images.unsplash.com/photo-1503454537295-e3c0a30ad1c3?w=400&h=300&fit=crop', photosCount: 5 },
+    { id: 'group-4-2', dealId: '4', name: 'Группа Б', coverUrl: 'https://images.unsplash.com/photo-1503454537395-e3c0a30ad1c3?w=400&h=300&fit=crop', photosCount: 5 },
+  ],
+  '5': [
+    { id: 'group-5-1', dealId: '5', name: 'Младшая группа', coverUrl: 'https://images.unsplash.com/photo-1503454537495-e3c0a30ad1c3?w=400&h=300&fit=crop', photosCount: 7 },
+    { id: 'group-5-2', dealId: '5', name: 'Старшая группа', coverUrl: 'https://images.unsplash.com/photo-1503454537595-e3c0a30ad1c3?w=400&h=300&fit=crop', photosCount: 7 },
+  ],
+  '6': [
+    { id: 'group-6-1', dealId: '6', name: 'Группа 1', coverUrl: 'https://images.unsplash.com/photo-1503454537695-e3c0a30ad1c3?w=400&h=300&fit=crop', photosCount: 9 },
   ],
 };
 
