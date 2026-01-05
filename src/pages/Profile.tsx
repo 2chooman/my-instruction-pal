@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Header } from '@/components/Header';
 import { apiClient } from '@/lib/apiClient';
 import { User, Deal, Photo } from '@/types';
 import { useToast } from '@/hooks/use-toast';
+
 const statusMap = {
   processing: 'В обработке',
   ready: 'Готово',
@@ -10,6 +12,7 @@ const statusMap = {
   pending_payment: 'Ждет оплаты'
 };
 export default function Profile() {
+  const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
   const [deals, setDeals] = useState<Deal[]>([]);
   const [photos, setPhotos] = useState<Record<string, Photo[]>>({});
@@ -189,6 +192,11 @@ export default function Profile() {
 
         <h2 className="text-xl">Мои фотосессии</h2>
         <p><small>Сделки синхронизируются с Битрикс</small></p>
+        <p>
+          <button onClick={() => navigate('/photosessions')} style={{ padding: '8px 15px', marginTop: '10px' }}>
+            Открыть все фотосессии →
+          </button>
+        </p>
         
         {deals.length === 0 ? <p>У вас пока нет фотосессий</p> : <div>
             {deals.map(deal => <fieldset key={deal.id} style={{

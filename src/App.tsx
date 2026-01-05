@@ -5,6 +5,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
+import PhotoSessions from "./pages/PhotoSessions";
+import PhotoSessionGroups from "./pages/PhotoSessionGroups";
+import GroupPhotos from "./pages/GroupPhotos";
 import DealDetails from "./pages/DealDetails";
 import NotFound from "./pages/NotFound";
 
@@ -20,6 +23,9 @@ const App = () => (
           <Route path="/" element={<Login />} />
           <Route path="/login" element={<Login />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/photosessions" element={<PhotoSessions />} />
+          <Route path="/photosessions/:dealId" element={<PhotoSessionGroups />} />
+          <Route path="/photosessions/:dealId/groups/:groupId" element={<GroupPhotos />} />
           <Route path="/deals/:id" element={<DealDetails />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

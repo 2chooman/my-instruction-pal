@@ -28,6 +28,20 @@ export interface Photo {
   id: string;
   url: string;
   thumbnailUrl: string;
+  shootingDate?: string;
+}
+
+export interface PhotoGroup {
+  id: string;
+  dealId: string;
+  name: string;
+  coverUrl: string;
+  photosCount: number;
+  parentId?: string; // for nested folders
+}
+
+export interface DealWithCover extends Deal {
+  coverUrl: string;
 }
 
 export type NotificationChannel = 'sms' | 'whatsapp';

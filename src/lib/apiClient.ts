@@ -3,6 +3,8 @@ import {
   Deal,
   DealDetails,
   Photo,
+  PhotoGroup,
+  DealWithCover,
   NotificationTemplate,
   NotificationTest,
   SendNotificationTestPayload,
@@ -55,16 +57,80 @@ const mockPhotos: Record<string, Photo[]> = {
     id: `photo-1-${i + 1}`,
     url: `https://images.unsplash.com/photo-${1511285560000 + i}?w=1200&h=800&fit=crop`,
     thumbnailUrl: `https://images.unsplash.com/photo-${1511285560000 + i}?w=400&h=300&fit=crop`,
+    shootingDate: '2024-11-15',
   })),
   '2': Array.from({ length: 5 }, (_, i) => ({
     id: `photo-2-${i + 1}`,
     url: `https://images.unsplash.com/photo-${1519741644000 + i}?w=1200&h=800&fit=crop`,
     thumbnailUrl: `https://images.unsplash.com/photo-${1519741644000 + i}?w=400&h=300&fit=crop`,
+    shootingDate: '2024-11-20',
   })),
   '3': Array.from({ length: 5 }, (_, i) => ({
     id: `photo-3-${i + 1}`,
     url: `https://images.unsplash.com/photo-${1503454537000 + i}?w=1200&h=800&fit=crop`,
     thumbnailUrl: `https://images.unsplash.com/photo-${1503454537000 + i}?w=400&h=300&fit=crop`,
+    shootingDate: '2024-11-10',
+  })),
+};
+
+const mockGroups: Record<string, PhotoGroup[]> = {
+  '1': [
+    { id: 'group-1-1', dealId: '1', name: 'Общие семейные', coverUrl: 'https://images.unsplash.com/photo-1511285560714-e5c4f6cc508e?w=400&h=300&fit=crop', photosCount: 3 },
+    { id: 'group-1-2', dealId: '1', name: 'Портреты', coverUrl: 'https://images.unsplash.com/photo-1511285560814-e5c4f6cc508e?w=400&h=300&fit=crop', photosCount: 2 },
+  ],
+  '2': [
+    { id: 'group-2-1', dealId: '2', name: 'Церемония', coverUrl: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=400&h=300&fit=crop', photosCount: 3 },
+    { id: 'group-2-2', dealId: '2', name: 'Банкет', coverUrl: 'https://images.unsplash.com/photo-1519741497774-611481863552?w=400&h=300&fit=crop', photosCount: 2 },
+    { id: 'group-2-3', dealId: '2', name: 'Прогулка', coverUrl: 'https://images.unsplash.com/photo-1519741497874-611481863552?w=400&h=300&fit=crop', photosCount: 2, parentId: 'group-2-1' },
+  ],
+  '3': [
+    { id: 'group-3-1', dealId: '3', name: 'Игровая зона', coverUrl: 'https://images.unsplash.com/photo-1503454537195-e3c0a30ad1c3?w=400&h=300&fit=crop', photosCount: 3 },
+    { id: 'group-3-2', dealId: '3', name: 'Костюмы', coverUrl: 'https://images.unsplash.com/photo-1503454537295-e3c0a30ad1c3?w=400&h=300&fit=crop', photosCount: 2 },
+  ],
+};
+
+const mockGroupPhotos: Record<string, Photo[]> = {
+  'group-1-1': Array.from({ length: 3 }, (_, i) => ({
+    id: `gphoto-1-1-${i + 1}`,
+    url: `https://images.unsplash.com/photo-${1511285560100 + i}?w=1200&h=800&fit=crop`,
+    thumbnailUrl: `https://images.unsplash.com/photo-${1511285560100 + i}?w=400&h=300&fit=crop`,
+    shootingDate: '2024-11-15',
+  })),
+  'group-1-2': Array.from({ length: 2 }, (_, i) => ({
+    id: `gphoto-1-2-${i + 1}`,
+    url: `https://images.unsplash.com/photo-${1511285560200 + i}?w=1200&h=800&fit=crop`,
+    thumbnailUrl: `https://images.unsplash.com/photo-${1511285560200 + i}?w=400&h=300&fit=crop`,
+    shootingDate: '2024-11-15',
+  })),
+  'group-2-1': Array.from({ length: 3 }, (_, i) => ({
+    id: `gphoto-2-1-${i + 1}`,
+    url: `https://images.unsplash.com/photo-${1519741644100 + i}?w=1200&h=800&fit=crop`,
+    thumbnailUrl: `https://images.unsplash.com/photo-${1519741644100 + i}?w=400&h=300&fit=crop`,
+    shootingDate: '2024-11-20',
+  })),
+  'group-2-2': Array.from({ length: 2 }, (_, i) => ({
+    id: `gphoto-2-2-${i + 1}`,
+    url: `https://images.unsplash.com/photo-${1519741644200 + i}?w=1200&h=800&fit=crop`,
+    thumbnailUrl: `https://images.unsplash.com/photo-${1519741644200 + i}?w=400&h=300&fit=crop`,
+    shootingDate: '2024-11-20',
+  })),
+  'group-2-3': Array.from({ length: 2 }, (_, i) => ({
+    id: `gphoto-2-3-${i + 1}`,
+    url: `https://images.unsplash.com/photo-${1519741644300 + i}?w=1200&h=800&fit=crop`,
+    thumbnailUrl: `https://images.unsplash.com/photo-${1519741644300 + i}?w=400&h=300&fit=crop`,
+    shootingDate: '2024-11-20',
+  })),
+  'group-3-1': Array.from({ length: 3 }, (_, i) => ({
+    id: `gphoto-3-1-${i + 1}`,
+    url: `https://images.unsplash.com/photo-${1503454537100 + i}?w=1200&h=800&fit=crop`,
+    thumbnailUrl: `https://images.unsplash.com/photo-${1503454537100 + i}?w=400&h=300&fit=crop`,
+    shootingDate: '2024-11-10',
+  })),
+  'group-3-2': Array.from({ length: 2 }, (_, i) => ({
+    id: `gphoto-3-2-${i + 1}`,
+    url: `https://images.unsplash.com/photo-${1503454537200 + i}?w=1200&h=800&fit=crop`,
+    thumbnailUrl: `https://images.unsplash.com/photo-${1503454537200 + i}?w=400&h=300&fit=crop`,
+    shootingDate: '2024-11-10',
   })),
 };
 
@@ -113,6 +179,14 @@ export const apiClient = {
     return mockDeals;
   },
 
+  async getDealsWithCovers(): Promise<DealWithCover[]> {
+    await delay(800);
+    return mockDeals.map(deal => ({
+      ...deal,
+      coverUrl: `https://images.unsplash.com/photo-${1511285560000 + parseInt(deal.id)}?w=400&h=300&fit=crop`,
+    }));
+  },
+
   async getDealDetails(id: string): Promise<DealDetails> {
     await delay(600);
     const deal = mockDeals.find(d => d.id === id);
@@ -128,6 +202,30 @@ export const apiClient = {
   async getDealPhotos(id: string): Promise<Photo[]> {
     await delay(1000);
     return mockPhotos[id] || [];
+  },
+
+  async getDealGroups(dealId: string): Promise<PhotoGroup[]> {
+    await delay(600);
+    const groups = mockGroups[dealId] || [];
+    // Return only top-level groups (no parentId)
+    return groups.filter(g => !g.parentId);
+  },
+
+  async getGroupPhotos(groupId: string): Promise<Photo[]> {
+    await delay(600);
+    return mockGroupPhotos[groupId] || [];
+  },
+
+  async getChildGroups(parentGroupId: string, dealId: string): Promise<PhotoGroup[]> {
+    await delay(400);
+    const groups = mockGroups[dealId] || [];
+    return groups.filter(g => g.parentId === parentGroupId);
+  },
+
+  async getGroupDetails(groupId: string, dealId: string): Promise<PhotoGroup | null> {
+    await delay(300);
+    const groups = mockGroups[dealId] || [];
+    return groups.find(g => g.id === groupId) || null;
   },
 
   async getNotificationTemplates(): Promise<NotificationTemplate[]> {
