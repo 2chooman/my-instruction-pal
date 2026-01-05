@@ -78,7 +78,7 @@ const mockDeals: Deal[] = [
 
 // Реальные фото детей с Unsplash
 const childrenPhotoIds = [
-  '1503454537195-1dcabb73ffb9', // ребенок улыбается
+  '1542037104857-ffbb0b9155fb', // дети в школе
   '1503919545889-aef636e10ad4', // дети играют
   '1516627145497-ae6968895b74', // детский портрет
   '1519340241574-2cec6aef0c01', // ребенок с мячом
@@ -113,7 +113,7 @@ const mockPhotos: Record<string, Photo[]> = {
 
 const mockGroups: Record<string, PhotoGroup[]> = {
   '1': [
-    { id: 'group-1-1', dealId: '1', name: 'Младшая группа А', coverUrl: 'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=400&h=300&fit=crop', photosCount: 16 },
+    { id: 'group-1-1', dealId: '1', name: 'Младшая группа А', coverUrl: 'https://images.unsplash.com/photo-1542037104857-ffbb0b9155fb?w=400&h=300&fit=crop', photosCount: 16 },
     { id: 'group-1-2', dealId: '1', name: 'Младшая группа Б', coverUrl: 'https://images.unsplash.com/photo-1503919545889-aef636e10ad4?w=400&h=300&fit=crop', photosCount: 12 },
     { id: 'group-1-3', dealId: '1', name: 'Младшая группа В', coverUrl: 'https://images.unsplash.com/photo-1516627145497-ae6968895b74?w=400&h=300&fit=crop', photosCount: 8 },
     { id: 'group-1-4', dealId: '1', name: 'Средняя группа А', coverUrl: 'https://images.unsplash.com/photo-1519340241574-2cec6aef0c01?w=400&h=300&fit=crop', photosCount: 10 },
@@ -127,7 +127,7 @@ const mockGroups: Record<string, PhotoGroup[]> = {
     { id: 'group-2-2', dealId: '2', name: 'Группа 2', coverUrl: 'https://images.unsplash.com/photo-1489710437720-ebb67ec84dd2?w=400&h=300&fit=crop', photosCount: 6 },
   ],
   '3': [
-    { id: 'group-3-1', dealId: '3', name: 'Основная группа', coverUrl: 'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=400&h=300&fit=crop', photosCount: 8 },
+    { id: 'group-3-1', dealId: '3', name: 'Основная группа', coverUrl: 'https://images.unsplash.com/photo-1542037104857-ffbb0b9155fb?w=400&h=300&fit=crop', photosCount: 8 },
   ],
   '4': [
     { id: 'group-4-1', dealId: '4', name: 'Группа А', coverUrl: 'https://images.unsplash.com/photo-1516627145497-ae6968895b74?w=400&h=300&fit=crop', photosCount: 5 },
