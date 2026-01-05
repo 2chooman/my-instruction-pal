@@ -3,13 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Header } from '@/components/Header';
 import { apiClient } from '@/lib/apiClient';
 import { DealDetails, PhotoGroup, User } from '@/types';
-
-const statusMap = {
-  processing: 'В обработке',
-  ready: 'Готово',
-  cancelled: 'Отменена',
-  pending_payment: 'Ждет оплаты',
-};
+import { Share2, Trash2, AlertCircle } from 'lucide-react';
 
 export default function PhotoSessionGroups() {
   const { dealId } = useParams<{ dealId: string }>();
@@ -41,11 +35,13 @@ export default function PhotoSessionGroups() {
     loadData();
   }, [dealId]);
 
+  const totalPhotos = groups.reduce((sum, g) => sum + g.photosCount, 0);
+
   if (isLoading) {
     return (
       <>
         <Header userName={user?.name} />
-        <div style={{ padding: '20px', fontFamily: 'Times New Roman, serif' }}>
+        <div style={{ padding: '24px 32px', fontFamily: 'Times New Roman, serif' }}>
           <p>Загрузка...</p>
         </div>
       </>
@@ -56,9 +52,21 @@ export default function PhotoSessionGroups() {
     return (
       <>
         <Header userName={user?.name} />
-        <div style={{ padding: '20px', fontFamily: 'Times New Roman, serif' }}>
-          <button onClick={() => navigate('/photosessions')}>← Назад к фотосессиям</button>
-          <p>Фотосессия не найдена</p>
+        <div style={{ padding: '24px 32px', fontFamily: 'Times New Roman, serif' }}>
+          <button
+            onClick={() => navigate('/photosessions')}
+            style={{
+              background: '#f5f5f5',
+              border: 'none',
+              padding: '8px 16px',
+              borderRadius: '20px',
+              cursor: 'pointer',
+              fontSize: '14px',
+            }}
+          >
+            ‹ Все фотосессии
+          </button>
+          <p style={{ marginTop: '20px' }}>Фотосессия не найдена</p>
         </div>
       </>
     );
@@ -67,53 +75,121 @@ export default function PhotoSessionGroups() {
   return (
     <>
       <Header userName={user?.name} />
-      <div style={{ padding: '20px', fontFamily: 'Times New Roman, serif' }}>
-        <button onClick={() => navigate('/photosessions')}>← Назад к фотосессиям</button>
-        <hr />
+      <div style={{ padding: '24px 32px', fontFamily: 'Times New Roman, serif', maxWidth: '1200px', margin: '0 auto' }}>
+        {/* Back button */}
+        <button
+          onClick={() => navigate('/photosessions')}
+          style={{
+            background: '#f5f5f5',
+            border: 'none',
+            padding: '8px 16px',
+            borderRadius: '20px',
+            cursor: 'pointer',
+            fontSize: '14px',
+            marginBottom: '16px',
+          }}
+        >
+          ‹ Все фотосессии
+        </button>
         
-        <h1>{deal.title}</h1>
-        <p>
-          <strong>Дата:</strong>{' '}
-          {new Date(deal.date).toLocaleDateString('ru-RU', {
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric',
-          })}
-        </p>
-        <p><strong>Статус:</strong> {statusMap[deal.status]}</p>
-        {deal.description && <p>{deal.description}</p>}
+        {/* Header row */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+          <div>
+            <h1 style={{ fontSize: '28px', fontWeight: 'bold', margin: 0 }}>
+              {deal.title}
+              <sup style={{ fontSize: '14px', color: '#666', marginLeft: '4px' }}>{totalPhotos}</sup>
+            </h1>
+            <p style={{ fontSize: '14px', color: '#666', margin: '8px 0 0 0' }}>
+              Дата съемок: {new Date(deal.date).toLocaleDateString('ru-RU', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+              })}
+            </p>
+          </div>
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <button
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                background: '#fff',
+                border: '1px solid #e5e5e5',
+                padding: '10px 24px',
+                borderRadius: '24px',
+                cursor: 'pointer',
+                fontSize: '14px',
+              }}
+            >
+              <Share2 size={16} />
+              Поделиться
+            </button>
+            <button
+              style={{
+                background: '#fff',
+                border: '1px solid #e5e5e5',
+                padding: '10px',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Trash2 size={18} color="#999" />
+            </button>
+          </div>
+        </div>
         
-        <hr />
+        {/* Order deadline warning */}
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'flex-end', 
+          alignItems: 'center', 
+          gap: '8px',
+          marginBottom: '32px',
+        }}>
+          <span style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '6px',
+            background: '#FFF7ED',
+            padding: '8px 16px',
+            borderRadius: '20px',
+            fontSize: '14px',
+            color: '#EA580C',
+          }}>
+            <AlertCircle size={16} />
+            Оформить заказ до 18:00 15.04.2025
+          </span>
+        </div>
         
-        <h2>Группы / Папки ({groups.length})</h2>
-        <p><small>Выберите группу для просмотра фотографий</small></p>
-        
+        {/* Groups grid */}
         {groups.length === 0 ? (
           <p>В этой фотосессии пока нет групп</p>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '15px', marginTop: '15px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
             {groups.map(group => (
-              <div
+              <button
                 key={group.id}
                 onClick={() => navigate(`/photosessions/${dealId}/groups/${group.id}`)}
                 style={{
-                  border: '1px solid #ccc',
+                  background: '#f5f5f5',
+                  border: 'none',
+                  padding: '20px 24px',
+                  borderRadius: '24px',
                   cursor: 'pointer',
-                  backgroundColor: '#f9f9f9',
+                  fontSize: '15px',
+                  fontWeight: '500',
+                  textAlign: 'center',
+                  transition: 'background 0.2s',
                 }}
+                onMouseOver={(e) => e.currentTarget.style.background = '#eee'}
+                onMouseOut={(e) => e.currentTarget.style.background = '#f5f5f5'}
               >
-                <img
-                  src={group.coverUrl}
-                  alt={group.name}
-                  style={{ width: '100%', height: '120px', objectFit: 'cover', display: 'block' }}
-                />
-                <div style={{ padding: '10px' }}>
-                  <strong>{group.name}</strong>
-                  <p style={{ margin: '5px 0' }}>
-                    <small>Фото: {group.photosCount}</small>
-                  </p>
-                </div>
-              </div>
+                {group.name}
+              </button>
             ))}
           </div>
         )}
