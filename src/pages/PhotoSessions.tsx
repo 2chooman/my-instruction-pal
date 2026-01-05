@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Header } from '@/components/Header';
+import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { apiClient } from '@/lib/apiClient';
 import { DealWithCover, User } from '@/types';
 import { Share2 } from 'lucide-react';
@@ -57,6 +58,10 @@ export default function PhotoSessions() {
     <>
       <Header userName={user?.name} />
       <div style={{ padding: '24px 32px', fontFamily: 'Times New Roman, serif', maxWidth: '1200px', margin: '0 auto' }}>
+        <Breadcrumbs items={[
+          { label: 'Профиль', path: '/profile' },
+          { label: 'Фотосессии' },
+        ]} />
         <h1 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '24px' }}>Фотосессии</h1>
         
         {deals.length === 0 ? (

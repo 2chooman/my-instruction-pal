@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Header } from '@/components/Header';
+import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { apiClient } from '@/lib/apiClient';
 import { DealDetails, PhotoGroup, User } from '@/types';
 import { Share2, Trash2, AlertCircle } from 'lucide-react';
@@ -76,21 +77,11 @@ export default function PhotoSessionGroups() {
     <>
       <Header userName={user?.name} />
       <div style={{ padding: '24px 32px', fontFamily: 'Times New Roman, serif', maxWidth: '1200px', margin: '0 auto' }}>
-        {/* Back button */}
-        <button
-          onClick={() => navigate('/photosessions')}
-          style={{
-            background: '#f5f5f5',
-            border: 'none',
-            padding: '8px 16px',
-            borderRadius: '20px',
-            cursor: 'pointer',
-            fontSize: '14px',
-            marginBottom: '16px',
-          }}
-        >
-          ‹ Все фотосессии
-        </button>
+        <Breadcrumbs items={[
+          { label: 'Профиль', path: '/profile' },
+          { label: 'Фотосессии', path: '/photosessions' },
+          { label: deal.title },
+        ]} />
         
         {/* Header row */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>

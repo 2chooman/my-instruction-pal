@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Header } from '@/components/Header';
+import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { apiClient } from '@/lib/apiClient';
 import { Photo, PhotoGroup, DealDetails, User } from '@/types';
 import { Share2, Trash2, AlertCircle, Plus, Layers } from 'lucide-react';
@@ -99,37 +100,12 @@ export default function GroupPhotos() {
     <>
       <Header userName={user?.name} />
       <div style={{ padding: '24px 32px', fontFamily: 'Times New Roman, serif', maxWidth: '1200px', margin: '0 auto' }}>
-        {/* Breadcrumb navigation */}
-        <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
-          {group.parentId && (
-            <button
-              onClick={() => navigate(`/photosessions/${dealId}`)}
-              style={{
-                background: '#f5f5f5',
-                border: 'none',
-                padding: '8px 16px',
-                borderRadius: '20px',
-                cursor: 'pointer',
-                fontSize: '14px',
-              }}
-            >
-              ‹ Фотосессия
-            </button>
-          )}
-          <button
-            onClick={() => navigate(getBackUrl())}
-            style={{
-              background: '#f5f5f5',
-              border: 'none',
-              padding: '8px 16px',
-              borderRadius: '20px',
-              cursor: 'pointer',
-              fontSize: '14px',
-            }}
-          >
-            {getBackLabel()}
-          </button>
-        </div>
+        <Breadcrumbs items={[
+          { label: 'Профиль', path: '/profile' },
+          { label: 'Фотосессии', path: '/photosessions' },
+          { label: deal.title, path: `/photosessions/${dealId}` },
+          { label: group.name },
+        ]} />
         
         {/* Header row */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
