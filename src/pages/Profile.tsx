@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Header } from '@/components/Header';
+import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { apiClient } from '@/lib/apiClient';
 import { User, Deal, Photo } from '@/types';
 import { useToast } from '@/hooks/use-toast';
@@ -109,14 +110,17 @@ export default function Profile() {
       </>;
   }
   return <>
-      
+      <Header userName={user?.name} />
       <div style={{
-      padding: '20px',
-      fontFamily: 'Times New Roman, serif'
+      padding: '24px 32px',
+      fontFamily: 'Times New Roman, serif',
+      maxWidth: '1200px',
+      margin: '0 auto'
     }}>
-        <h1 className="text-3xl">Личный кабинет</h1>
-        <p className="text-xl">Управление профилем и настройками</p>
-        <hr />
+        <Breadcrumbs items={[{ label: 'Профиль' }]} />
+        
+        <h1 style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '8px' }}>Личный кабинет</h1>
+        <p style={{ color: '#666', marginBottom: '24px' }}>Управление профилем и настройками</p>
 
         <h2>Информация о пользователе</h2>
         <p><small>Данные получены из T-ID</small></p>
